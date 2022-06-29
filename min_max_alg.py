@@ -22,11 +22,11 @@ class min_max_alg():
                 if not isinstance(pr, int):
                     if pr[0] > alpha_pr[0]:
                         alpha_pr = [pr[0], move]
-                        alpha = max(alpha, pr[0])
+                     alpha = max(alpha, pr[0])
                 else:
                     if pr > alpha_pr[0]:
                         alpha_pr = [pr, move]
-                        alpha = max(alpha, pr)
+                    alpha = max(alpha, pr)
                 if beta <= alpha:
                     break
             return alpha_pr
@@ -39,11 +39,11 @@ class min_max_alg():
                 if not isinstance(pr, int):
                     if pr[0] < beta_pr[0]:
                         beta_pr = [pr[0], move]
-                        beta = min(beta, pr[0])
+                    beta = min(beta, pr[0])
                 else:
                     if pr < beta_pr[0]:
                         beta_pr = [pr, move]
-                        beta = min(beta, pr)
+                    beta = min(beta, pr)
                 if beta <= alpha:
                     break
             return beta_pr
