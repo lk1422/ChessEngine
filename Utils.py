@@ -51,7 +51,6 @@ def convert_data(data, move):
 
 def convert_Fen(fen):
     board = chess.Board(fen)
-    print(board)
     if board.turn:
         move=1
     else:

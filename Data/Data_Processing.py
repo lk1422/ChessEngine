@@ -1,3 +1,4 @@
+import random
 import torch
 from chess import pgn, Board 
 import chess
@@ -104,6 +105,55 @@ class Data_Processing():
             score *=-1
         return score
 
+
+
+
+    def get_triples(game: pgn.Game) -> List[Tuple]:
+        #''' given a game the network will produce triplets(anchor, positive negative) for each move and store it in a list as well as whose move it is
+        #game -> game containing all moves and board positions
+        board = game.board()
+        positions = []
+        for move in game.mainline_moves():
+            if board.is_checkmate():
+                break
+            if board.turn:
+                turn =1
+            else:
+                turn = -1
+            all_legal_moves = list(board.legal_moves)
+            skip_state=False
+            i =0
+            while (neg_sample := random.choice(all_legal_moves)) == move: #get random move which isnt our positive
+                if i >3:#this is the case where only 1 legal move is possible so we can just skip this game
+                    skip_state = True
+                    break
+                i+=1
+                continue
+            if skip_state:
+                continue
+
+            anchor = Data_Processing.format_pieces(board)
+            board.push(neg_sample)#get board for negative sample
+            negative = Data_Processing.format_pieces(board)
+
+            board.pop()#reset board state
+
+            board.push(move)
+            positive = Data_Processing.format_pieces(board)
+
+            positions.append((turn,anchor, positive, negative))
+
+        return positions
+
+
+            
+
+
+
+
+
+
+
     def format_pieces(board: Board) -> List[Tuple]:
         #Paremeters:
         #board is a chess board
@@ -122,55 +172,18 @@ class Data_Processing():
         return arr
 
 
-    def convert_data(data, move):
-        arr =[]     
-        #get rid of new line
-        #iterate through all the pieces
-        for pieces in data:
-            data =[0 for i in range(64)]
-            #iterate through all splaces for the piece
-            for piece in pieces:
-                color =1
-                if piece == []:
-                    break
-                piece = int(piece)
-                if piece < 0:
-                    color = -1
-                    piece *=-1 
-
-                data[piece]= color
-            arr.extend(data)
-        move = [move for i in range(64)]
-        arr+=move
-        tensor = torch.tensor(arr)
-        tensor = tensor.reshape(7,8,8)
-        tensor = tensor.to(torch.float32)
-        return tensor
-
-    def convert_Fen(fen):
-        board = chess.Board(fen)
-        print(board)
-        if board.turn:
-            move=1
-        else:
-            move=-1
-        format_board = Data_Processing.format_pieces(board)
-        convert_to_in = Data_Processing.convert_data(format_board, move)
-        return convert_to_in
-
-                
-
 
     def get_pgn_to_test():
-        file ='./data_file/Akopian.pgn'
+        file ='./data_file/Adams.pgn'
         pgns = open(file)
         first_game = chess.pgn.read_game(pgns)
-        first_game = chess.pgn.read_game(pgns)
         print(first_game.headers["Result"])
-        vals =Data_Processing.Get_Key_Boards(first_game)
+        vals =Data_Processing.get_triples(first_game)
         print(len(vals))
-        print(vals)
-        print(Data_Processing.Stringify_Key_Boards(vals, 1))
+        test =Data_Processing.Stringify_Triples(vals)
+        print(test)
+        print(len(test))
+        
 
     def Stringify_Key_Boards(keyboards: List[Tuple], label: int) -> List[str]:
 
@@ -189,6 +202,32 @@ class Data_Processing():
                 for index in piece_arr:
                     current_string+=str(index) +','
                 current_string+='|'
+            current_string+='\n'
+            arr.append(current_string)
+        return arr
+
+    def Stringify_Triples(triples: List[Tuple]) -> List[str]:
+        # tParameters:
+        #triples -> List of (move, anchor, positive, negative) tuples 
+        #Returns:
+        #List of strings containing information about th eboard in each state
+
+        arr =[]
+        current_string =''
+        for boards in triples:
+            
+            turn = boards[0]
+            current_string = str(turn) +"-"
+            samples = boards[1:]
+            for board in samples:
+                for piece_arr in board:
+                    if len(piece_arr) == 0:
+                        current_string+= 'e|'
+                        continue
+                    for index in piece_arr:
+                        current_string+=str(index) +','
+                    current_string+='|'
+                current_string+=' '
             current_string+='\n'
             arr.append(current_string)
         return arr
@@ -232,13 +271,45 @@ class Data_Processing():
             print(f'{file} has been converted')
         print('Completed')
 
+
+
+
+    def make_triple_dataset():
+        head = './data_file'
+        files = os.listdir(head)
+        files = files[3:]#already converted first 3
+        for file in files:
+            if file == 'model_data':
+                continue
+            games = open(os.path.join(head, file))
+            while (game_pgn:=chess.pgn.read_game(games)) != None:
+                    #get interesting games
+                    
+                    try: 
+                        boards = Data_Processing.get_triples(game_pgn)
+                    except Exception as e:
+                        continue
+                    data = Data_Processing.Stringify_Triples(boards)
+                    data = ''.join(data)
+                    with open('./data_file/model_data/training_triples.csv', 'a+') as f:
+                        f.write(data)
+            games.close()
+            print(f'{file} has been converted')
+        print('Completed')
+
+
+
+
+
+
+
     
     def csv_length():
-        with open('./data_file/model_data/training.csv', 'r') as f:
+        with open('./data_file/model_data/training_triples.csv', 'r') as f:
             j =f.readlines()
             print(len(j))
     def print_test_data():
-        with open('./data_file/model_data/training.csv', 'r') as f:
+        with open('./data_file/model_data/training_triples.csv', 'r') as f:
             print(f.readline())
             print(f.readline())
             print(f.readline())
@@ -297,9 +368,16 @@ class Data_Processing():
                 print(f'Deleted {dirs}')
 
 
+
+
+
 if  __name__ == '__main__':
     #Data_Processing.make_dataset()   EnglishSicRev2g3.pgn has been converted
     #Data_Processing.print_test_data()
-    print(Data_Processing.convert_Fen('4r3/k1r1q2p/p2R2p1/2p5/2b1P3/P3Q2P/3K2P1/2R5 w - - 0 1'))
+    #print(Data_Processing.convert_Fen('4r3/k1r1q2p/p2R2p1/2p5/2b1P3/P3Q2P/3K2P1/2R5 w - - 0 1'))
+    #Data_Processing.make_triple_dataset()
+    Data_Processing.print_test_data()
+    
+
     
 
