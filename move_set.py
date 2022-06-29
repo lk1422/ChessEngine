@@ -1,6 +1,5 @@
-import chess
 
-class move_set:
+class move_set():
 
     def __init__(self):
         pass
