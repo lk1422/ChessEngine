@@ -2,7 +2,7 @@ import torch
 from model import Test_Model
 from Utils import convert_Fen
 import torch.nn.functional as F
-device= torch.device('cuda')
+device= torch.device('cuda') if torch.cuda_is_available() else torch.device('cpu')
 
 
 class function_class():
