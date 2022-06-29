@@ -1,4 +1,3 @@
-
 class move_set():
 
     def __init__(self):
@@ -361,7 +360,10 @@ class move_set():
     def printBoard(self, board):
         for r in range(8):
             for c in range(8):
-                print(board[r][c][1], end = " ")
+                if board[r][c][1] == "0":
+                    print(".", end = " ")
+                else:
+                    print(board[r][c][1], end = " ")
             print()
 
     def whiteThreatMap(self, board, rights): # what white is threatening
@@ -499,10 +501,10 @@ class move_set():
     '''
 
 
-    def update_fen(self, FEN, move):
+    def update_fen(self, FEN, currentmove):
         board, rights = self.processBoard(FEN)
         moves, count, castle = self.process_move(FEN)
-        piece, location = move[7:8], move[8:10]
+        piece, location = currentmove[7:8], currentmove[8:10]
         r,c = self.get_row_and_col(location)
         board[r][c] = (location, piece)
         newrow = ""
@@ -520,18 +522,24 @@ class move_set():
             newrow+= str(count)
         index, index1, index2, count = 0,0,0,0
         temp = FEN
-        while count < 2:
-            index = temp.index("/")
+        while count <= r:
+            if not "/" in temp:
+                index = temp.index(" ")
+            else:
+                index = temp.index("/")
             index1+=index
             temp = temp[index+1:]
-            index = temp.index("/")
+            if not "/" in temp:
+                index = temp.index(" ")
+            else:
+                index = temp.index("/")
             index2 = index + index1
             count+=1
         index1+=count-1
         index2+=count
         FEN1, FEN2 = FEN[0:index1+1], FEN[index2:]
         FEN = FEN1 + newrow + FEN2
-        piece, location = "0", move[1:3]
+        piece, location = "0", currentmove[1:3]
         r,c = self.get_row_and_col(location)
         board[r][c] = (location, "0")
         newrow = ""
@@ -549,11 +557,17 @@ class move_set():
             newrow+= str(count)
         index, index1, index2, count = 0,0,0,0
         temp = FEN
-        while count < r:
-            index = temp.index("/")
+        while count <= r:
+            if not "/" in temp:
+                index = temp.index(" ")
+            else:
+                index = temp.index("/")
             index1+=index
             temp = temp[index+1:]
-            index = temp.index("/")
+            if not "/" in temp:
+                index = temp.index(" ")
+            else:
+                index = temp.index("/")
             index2 = index + index1
             count+=1
         index1+=count-1
@@ -568,20 +582,17 @@ class move_set():
         rights[3] = str(int(rights[3])+1)
         if castle != "nocastle":
             rights[2] = rights[2].replace(castle, "")
-        if "ep" in move:
+        if "ep" in currentmove:
             rights[1] = location
         tempboard = FEN.split(" ")
         FEN = tempboard[0] + " " + rights[0]+" "+rights[1]+" "+rights[2]+" "+rights[3]+" "+rights[4]
         board2, rights2 = self.processBoard(FEN)
-        newmovelist = self.process_move(FEN)
-        return FEN, newmovelist
+        newmovelistt, count, castle = self.process_move(FEN)
+        return FEN, newmovelistt
    
-FEN = "r1r3k1/2q2pbp/p1n1pnp1/1p1p2B1/3P4/2P2NNP/PP1Q1PP1/R3R1K1 w - - 24 12"
-print(FEN)
-Game = move_set()
-move = "Bg5 to Bf6"
-newFEN, moves = Game.update_fen(FEN, move)
-print(newFEN)
+
+#FEN = "rnb1k3/pppp1p2/4pn2/8/3NP3/2N4q/PPP2PP1/R1B1KB2 w - Qq 0 13"
+#Game = move_set()
 
 
 
