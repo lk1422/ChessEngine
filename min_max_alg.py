@@ -5,6 +5,8 @@ from move_set import move_set
 
 class min_max_alg():
 
+    class min_max_alg():
+
     def minimax(FEN, move_list, depth, alpha, beta, current_turn):
 
         if depth == 0:
@@ -16,18 +18,6 @@ class min_max_alg():
             alpha_pr = [float('-inf'), " "]
             for move in move_list:
                 new_fen, new_move_list = Game.update_fen(FEN, move)
-                pr = min_max_alg.minimax(new_fen, new_move_list, depth -1, alpha, beta, False)
-                if not isinstance(pr, int):
-                    if pr[0] > alpha_pr[0]:
-                        alpha_pr = [pr[0], move]
-                else:
-                    if pr > alpha_pr[0]:
-                        alpha_pr = [pr, move]
-                alpha = max(alpha, pr[0])
-                if beta <= alpha:
-                    break
-            return alpha_pr
-
                 pr = min_max_alg.minimax(new_fen, new_move_list, depth -1, alpha, beta, False)
                 if not isinstance(pr, int):
                     if pr[0] > alpha_pr[0]:
@@ -45,19 +35,10 @@ class min_max_alg():
             beta_pr = [float('inf'), " "]
             for move in move_list:
                 new_fen, new_move_list = Game.update_fen(FEN, move)
-            return beta_pr,FEN
                 pr = min_max_alg.minimax(new_fen, new_move_list, depth -1, alpha, beta, True)
                 if not isinstance(pr, int):
                     if pr[0] < beta_pr[0]:
                         beta_pr = [pr[0], move]
-                else:
-                    if pr < beta_pr[0]:
-                        beta_pr = [pr, move]
-                beta = min(beta, pr)
-                if beta <= alpha:
-                    break
-            return beta_pr
-
                         beta = min(beta, pr[0])
                 else:
                     if pr < beta_pr[0]:
