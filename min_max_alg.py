@@ -14,8 +14,12 @@ class min_max_alg():
             for move in move_list:
                 new_fen, new_move_list = Game.update_fen(FEN, move)
                 pr = min_max_alg.minimax(new_fen, new_move_list, depth -1, alpha, beta, False)
-                if pr[0] > alpha_pr[0]:
-                    alpha_pr = [pr[0], move]
+                if not isinstance(pr, int):
+                    if pr[0] > alpha_pr[0]:
+                        alpha_pr = [pr[0], move]
+                else:
+                    if pr > alpha_pr[0]:
+                        alpha_pr = [pr, move]
                 alpha = max(alpha, pr[0])
                 if beta <= alpha:
                     break
@@ -26,8 +30,12 @@ class min_max_alg():
             for move in move_list:
                 new_fen, new_move_list = Game.update_fen(FEN, move)
                 pr = min_max_alg.minimax(new_fen, new_move_list, depth -1, alpha, beta, True)
-                if pr < beta_pr[0]:
-                    beta_pr = [pr, move]
+                if not isinstance(pr, int):
+                    if pr[0] < beta_pr[0]:
+                        beta_pr = [pr[0], move]
+                else:
+                    if pr < beta_pr[0]:
+                        beta_pr = [pr, move]
                 beta = min(beta, pr)
                 if beta <= alpha:
                     break
@@ -38,6 +46,7 @@ game = move_set()
 movelist, count, castle = game.process_move(FEN)
 stuff = min_max_alg.minimax(FEN, movelist, 2, float('-inf'), float('inf'), True)
 print(stuff)
+#lenny loves his mom's burgers
             
 
 
