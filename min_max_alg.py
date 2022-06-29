@@ -5,8 +5,6 @@ from move_set import move_set
 
 class min_max_alg():
 
-    class min_max_alg():
-
     def minimax(FEN, move_list, depth, alpha, beta, current_turn):
 
         if depth == 0:
@@ -22,7 +20,7 @@ class min_max_alg():
                 if not isinstance(pr, int):
                     if pr[0] > alpha_pr[0]:
                         alpha_pr = [pr[0], move]
-                     alpha = max(alpha, pr[0])
+                    alpha = max(alpha, pr[0])
                 else:
                     if pr > alpha_pr[0]:
                         alpha_pr = [pr, move]
