@@ -15,7 +15,7 @@ class Test_Model(nn.Module):
                                    nn.ReLU(), nn.Linear(128,64), nn.ReLU(), nn.Linear(64,2))
         
 
-    def init_weights(self):
+    def init_weights(self):#For hyper parameter testing
         torch.nn.init.normal_(self.conv1.weight,0, 1e-7)
         torch.nn.init.normal_(self.conv2.weight,0, 1e-7)
         torch.nn.init.normal_(self.conv3.weight,0, 1e-7)
