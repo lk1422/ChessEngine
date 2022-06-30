@@ -1,30 +1,28 @@
 from function import function_class
-
-    
-from move_set import move_set
+import chess
 
 
 class min_max_alg():
     
-    def wrapper(FEN, move_list, depth, alpha, beta, current_turn):
+    def wrapper(board, depth, alpha, beta, current_turn):
         f = function_class('./previous_models/Prototype2.0-Adam-SGD-1C5L0B-4.pth')
-        test =min_max_alg.minimax(FEN, move_list, depth, alpha, beta, current_turn, f)
+        test =min_max_alg.minimax(board, depth, alpha, beta, current_turn, f)
         return test
 
 
 
-    def minimax(FEN, move_list, depth, alpha, beta, current_turn, func):
+    def minimax(board, depth, alpha, beta, current_turn, func):
 
         if depth == 0:
+            FEN = board.FEN
             return func.eval(FEN)
-
-        Game = move_set()
 
         if current_turn:
             alpha_pr = [float('-inf'), " "]
+            move_list = board.legal_moves
             for move in move_list:
-                new_fen, new_move_list = Game.update_fen(FEN, move)
-                pr = min_max_alg.minimax(new_fen, new_move_list, depth -1, alpha, beta, False, func)
+                newboard = board.push(move)
+                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func)
                 if not isinstance(pr, float):
                     if pr[0] > alpha_pr[0]:
                         alpha_pr = [pr[0], move]
@@ -39,9 +37,10 @@ class min_max_alg():
 
         else:
             beta_pr = [float('inf'), " "]
+            move_list = board.legal_moves
             for move in move_list:
-                new_fen, new_move_list = Game.update_fen(FEN, move)
-                pr = min_max_alg.minimax(new_fen, new_move_list, depth -1, alpha, beta, True, func)
+                newboard = board.push(move)
+                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, True, func)
                 if not isinstance(pr, float):
                     if pr[0] < beta_pr[0]:
                         beta_pr = [pr[0], move]
@@ -55,10 +54,7 @@ class min_max_alg():
             return beta_pr
             
 
-
 if __name__ == '__main__':
     FEN = "rnb1k2r/p4ppp/4p3/2b3P1/4p2N/8/P1P1PP1P/R1BqKB1R w - KQkq 0 11"
-    game = move_set()
-    movelist, count, castle = game.process_move(FEN)
-    print(min_max_alg.wrapper(FEN, movelist, 2, float('-inf'), float('inf'), True))
-
+    board = chess.Board(FEN)
+    print(min_max_alg.wrapper(board, 2, float('-inf'), float('inf'), True))
