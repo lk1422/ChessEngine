@@ -1,25 +1,32 @@
-
+import random
 from torch.utils.data import Dataset
 import os
 import torch
 
 
-class TripletData(Dataset):
+class TripletData(Dataset): #this dataset an be used for neighbors as well and the classifier
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, classifier = False):
         root = './Data/data_file/model_data/'
         f = open(root+file_path, 'r')
         self.data = f.readlines()
         f.close()
+        self.classifier = classifier
 
 
     def __len__(self):
         return len(self.data)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index ):
         info = self.data[index]
         anchor, pos, neg= self.triplet_convert_data(info)
-        return anchor, pos, neg
+        if not self.classifier:
+            return anchor, pos, neg
+        else:
+            if random.random() > .5:
+                return (1, anchor, pos)
+            else:
+                return (0, anchor, neg)
 
     def triplet_convert_data(self, data):
         first_split = data.index('-')
@@ -75,5 +82,9 @@ class TripletData(Dataset):
 
                 
 
-    def split_dataset(self, split):
-        return None
+    def split(self, split_size):
+        train_size = int(split_size * len(self))
+        test_size = len(self)-train_size
+        print(f"Train Size: {train_size}")
+        print(f"Test Size: {test_size}")
+        return torch.utils.data.random_split(self, [train_size, test_size])
