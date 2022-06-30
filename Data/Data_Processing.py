@@ -199,7 +199,7 @@ class Data_Processing():
                 #get move
                 move=  Data_Processing.get_random_move(return_state)
                 return_state.push(move)
-            neg = Data_Processing.format_pieces(board)
+            neg = Data_Processing.format_pieces(return_state)
 
             info.append((turn, anchor, pos, neg)) #note since the board is in the state after the last mainline move we do not need to do any clean up
         
