@@ -1,4 +1,4 @@
-from function import function_class
+from function_class import function_class
 import chess
 
 
@@ -21,7 +21,8 @@ class min_max_alg():
             alpha_pr = [float('-inf'), " "]
             move_list = board.legal_moves
             for move in move_list:
-                newboard = board.push(move)
+                newboard = board.copy()
+                newboard.push(move)
                 pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func)
                 if not isinstance(pr, float):
                     if pr[0] > alpha_pr[0]:
@@ -39,7 +40,8 @@ class min_max_alg():
             beta_pr = [float('inf'), " "]
             move_list = board.legal_moves
             for move in move_list:
-                newboard = board.push(move)
+                newboard = board.copy()
+                newboard.push(move)
                 pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, True, func)
                 if not isinstance(pr, float):
                     if pr[0] < beta_pr[0]:
