@@ -19,14 +19,13 @@ class TripletData(Dataset): #this dataset an be used for neighbors as well and t
 
     def __getitem__(self, index ):
         info = self.data[index]
-        anchor, pos, neg= self.triplet_convert_data(info)
         if not self.classifier:
-            return anchor, pos, neg
+            return   self.triplet_convert_data(info)
         else:
             if random.random() > .5:
-                return (1, anchor, pos)
+                return self.triplet_convert_classifier(info, True)
             else:
-                return (0, anchor, neg)
+                return self.triplet_convert_classifier(info, False)
 
     def triplet_convert_data(self, data):
         first_split = data.index('-')
@@ -40,7 +39,25 @@ class TripletData(Dataset): #this dataset an be used for neighbors as well and t
         anchor = self.convert_data(data[0], move)
         pos = self.convert_data(data[1], -1*move)
         neg = self.convert_data(data[2], -1 * move)
-        return anchor, pos, neg
+        return (anchor, pos, neg)
+
+
+    def triplet_convert_classifier(self, data, pos_neg_bool):
+        first_split = data.index('-')
+        if first_split == 0 :
+            first_split=2
+        
+        move = int(data[:first_split])
+        data = data[first_split+1: ].split(' ')
+        if data[-1] == '\n':
+            data = data[:-1]
+        anchor = self.convert_data(data[0], move)
+        if pos_neg_bool:
+            pos = self.convert_data(data[1], -1*move)
+            return (1, anchor, pos)
+        else:
+            neg = self.convert_data(data[2], -1 * move)
+            return (0, anchor, neg)
 
         
 
