@@ -26,25 +26,26 @@ class Main_Class():
             print("Not a valid color, Exiting")
         if move_state:#make first move 
             #minimax(board, depth, alpha, beta, current_turn, func):
-            move = self.minimax(self.board, 3, float('-inf'), float('inf'),move_state, self.f)
+            move = self.minimax(self.board, 2, float('-inf'), float('inf'),move_state, self.f, self.board)
             print(f"Confidence {move[0]}, Move: {move[1]}")
-            self.board.push(move)
+            self.board.push(move[1])
             print(self.board)
         while (command:= input("Enter Your move or [Q] to quit ")) != "Q":
                 try:
                     mv = self.board.push_san(command)
                     print(self.board)
                     print(f"You moved {mv}")
-                    move = self.minimax(self.board, 3, float('-inf'), float('inf'),move_state, self.f)
+                    move = self.minimax(self.board, 2, float('-inf'), float('inf'),move_state, self.f,self.board)
                     print(f"Confidence {move[0]}, Move: {move[1]}")
                     self.board.push(move[1])
+                    print(self.board)
                 except Exception as e:
                     print("Invalid Input")
 
 
 
 if __name__== '__main__':
-    m = Main_Class("./previous_models/Prototype2.0-Adam-SGD-1C5L0B-4.pth")
+    m = Main_Class("./previous_models/ScoreNetL2-84.pth")
     m.run()
 
 
