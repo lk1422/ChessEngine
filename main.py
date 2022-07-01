@@ -41,11 +41,12 @@ class Main_Class():
                     print(self.board)
                 except Exception as e:
                     print("Invalid Input")
+                    print(e)
 
 
 
 if __name__== '__main__':
-    m = Main_Class("./previous_models/ScoreNetL2-84.pth")
+    m = Main_Class("./previous_models/ScoreNetL3-N2-cpu.pth")
     m.run()
 
 
