@@ -12,11 +12,11 @@ class function_class():
         self.model.load_state_dict(torch.load(path))
 
 
-    def eval(self,anchor, pos, move):
+    def eval(self,start_board, pos, move):
         #flip fen because nick is an idiot and used the wrong format
 
         pos = convert_Fen(pos).to(device).unsqueeze(0)
-        anchor = convert_Fen(anchor).unsqueeze(0)
+        anchor = convert_Fen(start_board.fen()).unsqueeze(0)
 
         out = torch.sigmoid(self.model(anchor, pos)).squeeze().item()
         if not move:
