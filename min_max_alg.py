@@ -6,11 +6,6 @@ class min_max_alg():
 
     def minimax(board, depth, alpha, beta, current_turn, func, cache):
 
-        if board.turn:
-            cache[2] = board
-        else:
-            cache[1] = board
-
         if depth == 0:
             FEN = board.fen()
             parent_FEN = cache[2].fen()
@@ -19,12 +14,12 @@ class min_max_alg():
             return func.eval(FEN, parent_FEN, current_turn)
 
         if current_turn:
+            if depth == cache[0] or depth == cache[0]-1:
+                cache[2] = board
             alpha_pr = [float('-inf'), " "]
             move_list = board.legal_moves
             for move in move_list:
                 newboard = board.copy()
-                if depth == cache[0]-1:
-                    cache[2] = newboard
                 newboard.push(move)
                 pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func, cache)
                 if not isinstance(pr, float):
@@ -40,6 +35,8 @@ class min_max_alg():
             return alpha_pr
 
         else:
+            if depth == cache[0] or depth == cache[0]-1:
+                cache[1] = board
             beta_pr = [float('inf'), " "]
             move_list = board.legal_moves
             for move in move_list:
