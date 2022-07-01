@@ -29,6 +29,24 @@ class Test_Model(nn.Module):
         
         
         return x
+
+
+class Encoding_Network(nn.Module):
+    
+    def __init__(self):
+        
+        super(Encoding_Network, self).__init__()
+        self.conv = nn.Sequential(nn.Conv2d(7, 32, kernel_size=2), nn.ReLU(), nn.Conv2d(32, 64, kernel_size=2), nn.BatchNorm2d(64), nn.ReLU(),
+                                 nn.MaxPool2d(2,2))
+        self.linear = nn.Linear(576, 256)
+        
+        
+    def forward(self,x):
+        x = self.conv(x)
+        x = x.reshape(x.shape[0], -1)
+        x = F.relu(self.linear(x))
+      
+        return x
      
 
 
