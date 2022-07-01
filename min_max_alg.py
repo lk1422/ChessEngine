@@ -1,20 +1,13 @@
-from function_class import function_class
+from function import function_class
 import chess
 
 
 class min_max_alg():
-    
-    def wrapper(board, depth, alpha, beta, current_turn):
-        f = function_class('./previous_models/Prototype2.0-Adam-SGD-1C5L0B-4.pth')
-        test =min_max_alg.minimax(board, depth, alpha, beta, current_turn, f)
-        return test
-
-
 
     def minimax(board, depth, alpha, beta, current_turn, func):
 
         if depth == 0:
-            FEN = board.FEN
+            FEN = board.fen()
             return func.eval(FEN)
 
         if current_turn:
@@ -57,6 +50,7 @@ class min_max_alg():
             
 
 if __name__ == '__main__':
-    FEN = "rnb1k2r/p4ppp/4p3/2b3P1/4p2N/8/P1P1PP1P/R1BqKB1R w - KQkq 0 11"
+    FEN = "rnb1k2r/p4ppp/4p3/2b3P1/4p2N/8/P1P1PP1P/R1BK1B1R b kq - 0 11"
     board = chess.Board(FEN)
-    print(min_max_alg.wrapper(board, 2, float('-inf'), float('inf'), True))
+    print(min_max_alg.wrapper(board, 3, float('-inf'), float('inf'), True))
+   

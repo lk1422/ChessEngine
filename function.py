@@ -1,6 +1,7 @@
 import torch
 from model import Test_Model
 from Utils import convert_Fen
+import torch
 import torch.nn.functional as F
 device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -11,17 +12,13 @@ class function_class():
         self.model.load_state_dict(torch.load(path))
 
 
-    def eval(self, fen):
+    def eval(self,anchor, pos, move):
         #flip fen because nick is an idiot and used the wrong format
-        fen = fen.split(' ')
-        temp = fen[2]
-        fen[2] = fen[3]
-        fen[3] = temp
-        fen = " ".join(fen)
-
 
         inputs = convert_Fen(fen).to(device).unsqueeze(0)
-        out = F.softmax(self.model(inputs), dim=1).squeeze()[0].item()
+        out = torch.sigmoid(self.model(anchor, pos)).squeeze()[0].item()
+        if not move:
+            out *= -1
         return out
 
 
