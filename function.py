@@ -3,23 +3,27 @@ from model import *
 from Utils import convert_Fen
 import torch
 import torch.nn.functional as F
+import chess
 device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 
 class function_class():
     def __init__(self,path):
-        self.model = ScoreNetL2().to(device)
+        self.model = ScoreNetL2("./previous_models/LVec2.pth").to(device)
         self.model.load_state_dict(torch.load(path))
+        self.model.eval()
 
 
-    def eval(self,start_board, pos, move):
+    def eval(self,pos,anchor, move):
         #flip fen because nick is an idiot and used the wrong format
-
+        print(pos)
         pos = convert_Fen(pos).to(device).unsqueeze(0)
-        anchor = convert_Fen(start_board.fen()).unsqueeze(0)
+        anchor = convert_Fen(anchor).to(device).unsqueeze(0)
 
-        out = torch.sigmoid(self.model(anchor, pos)).squeeze().item()
-        if not move:
+        out = torch.sigmoid(self.model(anchor, pos))
+        out = out.squeeze().item()
+        print(out)
+        if  move:
             out *= -1
         return out
 
