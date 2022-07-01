@@ -1,5 +1,5 @@
 import torch
-from model import Test_Model
+from model import *
 from Utils import convert_Fen
 import torch
 import torch.nn.functional as F
@@ -8,15 +8,17 @@ device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu
 
 class function_class():
     def __init__(self,path):
-        self.model = Test_Model().to(device)
+        self.model = ScoreNetL2().to(device)
         self.model.load_state_dict(torch.load(path))
 
 
     def eval(self,anchor, pos, move):
         #flip fen because nick is an idiot and used the wrong format
 
-        inputs = convert_Fen(fen).to(device).unsqueeze(0)
-        out = torch.sigmoid(self.model(anchor, pos)).squeeze()[0].item()
+        pos = convert_Fen(pos).to(device).unsqueeze(0)
+        anchor = convert_Fen(anchor).unsqueeze(0)
+
+        out = torch.sigmoid(self.model(anchor, pos)).squeeze().item()
         if not move:
             out *= -1
         return out

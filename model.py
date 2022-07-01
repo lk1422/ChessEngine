@@ -70,7 +70,7 @@ class Longer_Encoding_Network(nn.Module):
     
 class ScoreNetL2(nn.Module):#
     def __init__(self, Encoder_Path):
-        super(ScoreNet, self).__init__()
+        super(ScoreNetL2, self).__init__()
         self.Enc = Longer_Encoding_Network()
         self.Enc.load_state_dict(torch.load(Encoder_Path))
         
@@ -88,7 +88,7 @@ class ScoreNetL2(nn.Module):#
 
 class ScoreNetL3(nn.Module):
     def __init__(self, Encoder_Path):
-        super(ScoreNet, self).__init__()
+        super(ScoreNetL3, self).__init__()
         self.Enc = Longer_Encoding_Network()
         self.Enc.load_state_dict(torch.load(Encoder_Path))
         
