@@ -4,11 +4,12 @@ import chess
 
 class min_max_alg():
 
-    def minimax(board, depth, alpha, beta, current_turn, func):
+    def minimax(board, depth, alpha, beta, current_turn, func, orig_board):
 
         if depth == 0:
             FEN = board.fen()
-            return func.eval(FEN)
+            parent_FEN = orig_board.fen()
+            return func.eval(FEN, parent_FEN, current_turn)
 
         if current_turn:
             alpha_pr = [float('-inf'), " "]
@@ -16,7 +17,7 @@ class min_max_alg():
             for move in move_list:
                 newboard = board.copy()
                 newboard.push(move)
-                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func)
+                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func, orig_board)
                 if not isinstance(pr, float):
                     if pr[0] > alpha_pr[0]:
                         alpha_pr = [pr[0], move]
@@ -35,7 +36,7 @@ class min_max_alg():
             for move in move_list:
                 newboard = board.copy()
                 newboard.push(move)
-                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, True, func)
+                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, True, func, orig_board)
                 if not isinstance(pr, float):
                     if pr[0] < beta_pr[0]:
                         beta_pr = [pr[0], move]
