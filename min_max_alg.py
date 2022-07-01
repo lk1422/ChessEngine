@@ -4,11 +4,13 @@ import chess
 
 class min_max_alg():
 
-    def minimax(board, depth, alpha, beta, current_turn, func, orig_board):
+    def minimax(board, depth, alpha, beta, current_turn, func, cache):
 
         if depth == 0:
             FEN = board.fen()
-            parent_FEN = orig_board.fen()
+            parent_FEN = cache[2].fen()
+            if current_turn:
+                parent_FEN = cache[1].fen()
             return func.eval(FEN, parent_FEN, current_turn)
 
         if current_turn:
@@ -16,8 +18,10 @@ class min_max_alg():
             move_list = board.legal_moves
             for move in move_list:
                 newboard = board.copy()
+                if depth == cache[0] or depth == cache[0]-1:
+                    cache[2] = newboard
                 newboard.push(move)
-                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func, orig_board)
+                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func, cache)
                 if not isinstance(pr, float):
                     if pr[0] > alpha_pr[0]:
                         alpha_pr = [pr[0], move]
@@ -35,8 +39,10 @@ class min_max_alg():
             move_list = board.legal_moves
             for move in move_list:
                 newboard = board.copy()
+                if depth == cache[0] or depth == cache[0]-1:
+                    cache[1] = newboard
                 newboard.push(move)
-                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, True, func, orig_board)
+                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, True, func, cache)
                 if not isinstance(pr, float):
                     if pr[0] < beta_pr[0]:
                         beta_pr = [pr[0], move]
@@ -54,4 +60,5 @@ if __name__ == '__main__':
     FEN = "rnb1k2r/p4ppp/4p3/2b3P1/4p2N/8/P1P1PP1P/R1BK1B1R b kq - 0 11"
     board = chess.Board(FEN)
     print(min_max_alg.wrapper(board, 3, float('-inf'), float('inf'), True))
+   
    
