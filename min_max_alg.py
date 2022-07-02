@@ -4,21 +4,28 @@ import chess
 
 class min_max_alg():
 
-    def minimax(board, depth, alpha, beta, current_turn, func, orig_board):
+    def minimax(board, depth, alpha, beta, current_turn, func, cache):
 
         if depth == 1:
             FEN = board.fen()
-            parent_FEN = orig_board.fen()
-            print(orig_board)
-            return func.eval(FEN, parent_FEN, orig_board.turn)
+            if current_turn:
+                orig_board = cache[2]
+                parent_FEN = orig_board.fen()
+                return -(func.eval(FEN, parent_FEN, current_turn))
+            else:
+                orig_board = cache[1]
+                parent_FEN = orig_board.fen()
+                return (func.eval(FEN, parent_FEN, current_turn))
 
         if current_turn:
+            if depth == cache[0] or depth == cache[0]-1:
+                cache[1] = board
             alpha_pr = [float('-inf'), " "]
             move_list = board.legal_moves
             for move in move_list:
                 newboard = board.copy()
                 newboard.push(move)
-                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func, orig_board)
+                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, False, func, cache)
                 if not isinstance(pr, float):
                     if pr[0] > alpha_pr[0]:
                         alpha_pr = [pr[0], move]
@@ -32,12 +39,14 @@ class min_max_alg():
             return alpha_pr
 
         else:
+            if depth == cache[0] or depth == cache[0]-1:
+                cache[2] = board
             beta_pr = [float('inf'), " "]
             move_list = board.legal_moves
             for move in move_list:
                 newboard = board.copy()
                 newboard.push(move)
-                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, True, func, orig_board)
+                pr = min_max_alg.minimax(newboard, depth -1, alpha, beta, True, func, cache)
                 if not isinstance(pr, float):
                     if pr[0] < beta_pr[0]:
                         beta_pr = [pr[0], move]

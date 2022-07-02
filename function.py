@@ -14,10 +14,9 @@ class function_class():
 
 
     def eval(self,pos,anchor, move):
-        print(move)
+        #print(move)
         pos = convert_Fen(pos).unsqueeze(0)
         anchor = convert_Fen(anchor).unsqueeze(0)
-
         out = torch.sigmoid(self.model(anchor, pos))
         out = out.squeeze().item()
         return out

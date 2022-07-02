@@ -26,7 +26,7 @@ class Main_Class():
             print("Not a valid color, Exiting")
         if move_state:#make first move 
             #minimax(board, depth, alpha, beta, current_turn, func):
-            move = self.minimax(self.board, 2, float('-inf'), float('inf'),move_state, self.f, self.board)
+            move = self.minimax(self.board, 2, float('-inf'), float('inf'),move_state, self.f, [2, self.board, self.board])
             print(f"Confidence {move[0]}, Move: {move[1]}")
             self.board.push(move[1])
             print(self.board)
@@ -35,13 +35,12 @@ class Main_Class():
                     mv = self.board.push_san(command)
                     print(self.board)
                     print(f"You moved {mv}")
-                    move = self.minimax(self.board, 2, float('-inf'), float('inf'),move_state, self.f,self.board)
+                    move = self.minimax(self.board, 2, float('-inf'), float('inf'),move_state, self.f, [2, self.board, self.board])
                     print(f"Confidence {move[0]}, Move: {move[1]}")
                     self.board.push(move[1])
                     print(self.board)
                 except Exception as e:
                     print("Invalid Input")
-                    print(e)
 
 
 
