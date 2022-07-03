@@ -101,3 +101,20 @@ class ScoreNetL3(nn.Module):
         x = torch.cat((AnchorVec, SampleVec), 1)
         x = self.linear(x)
         return x
+
+class ScoreNetL5(nn.Module):#
+    def __init__(self, Encoder_Path):
+        super(ScoreNetL5, self).__init__()
+        self.Enc = Longer_Encoding_Network()
+        self.Enc.load_state_dict(torch.load(Encoder_Path))
+        
+        self.linear = nn.Sequential(nn.Linear(1568, 2048), nn.BatchNorm1d(2048), nn.ReLU(), nn.Linear(2048,2048),
+                                    nn.BatchNorm1d(2048), nn.ReLU(), nn.Linear(2048,1024), nn.BatchNorm1d(1024), nn.ReLU(),
+                                   nn.Linear(1024,512), nn.BatchNorm1d(512), nn.ReLU(), nn.Linear(512, 1))
+        
+    def forward(self,Anchor, Sample):
+        AnchorVec = self.Enc(Anchor)
+        SampleVec = self.Enc(Sample)
+        x = torch.cat((AnchorVec, SampleVec), 1)
+        x = self.linear(x)
+        return x
