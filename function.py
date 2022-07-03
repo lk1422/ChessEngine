@@ -4,7 +4,7 @@ from Utils import convert_Fen
 import torch
 import torch.nn.functional as F
 import chess
-
+from collections import OrderedDict
 
 class function_class():
     def __init__(self,path):
@@ -12,14 +12,17 @@ class function_class():
         self.model.load_state_dict(torch.load(path))
         self.model.eval()
 
-
-    def eval(self,pos,anchor, move):
-        #print(move)
-        pos = convert_Fen(pos).unsqueeze(0)
-        anchor = convert_Fen(anchor).unsqueeze(0)
-        out = torch.sigmoid(self.model(anchor, pos))
-        out = out.squeeze().item()
-        return out
+    def eval(self,pos,anchor, move, cache):
+        key = pos.split(" ")[0] + anchor.split(" ")[0]
+        if key in cache[2]:
+            return cache[2][key]
+        else:
+            pos = convert_Fen(pos).unsqueeze(0)
+            anchor = convert_Fen(anchor).unsqueeze(0)
+            out = torch.sigmoid(self.model(anchor, pos))
+            out = out.squeeze().item()
+            cache[2][key] = out
+            return out
 
 
 
