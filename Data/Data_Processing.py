@@ -373,7 +373,7 @@ class Data_Processing():
         with open('./data_file/model_data/training_triples.csv', 'r') as f:
             lines = f.readlines()
             for line in lines:
-                print(len(line))
+                print(line)
 
 
     def donwload_all_files():
@@ -434,7 +434,7 @@ class Data_Processing():
 
 if  __name__ == '__main__':
     #Data_Processing.make_dataset()   EnglishSicRev2g3.pgn has been converted
-    #Data_Processing.print_test_data()
+    Data_Processing.print_test_data()
     #print(Data_Processing.convert_Fen('4r3/k1r1q2p/p2R2p1/2p5/2b1P3/P3Q2P/3K2P1/2R5 w - - 0 1'))
     #Data_Processing.make_triple_dataset() bled1979
     #Data_Processing.get_pgn_to_test()
