@@ -1,7 +1,5 @@
-# ChessEngine
-Using Minimax scored with a NN
+#Chess Engine
 
-WE FAILED
-End to End in this case is simply much more trivial compared to scoring a board.
+NN failed to learn a good position to probability mapping which was used for the minimax alg.
+Didnt seem to learn the value of pieces and overvalued giving checks.
 
-Next Project -> End to End Chess move predictor
